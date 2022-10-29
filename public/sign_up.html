@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>대화상점</title>
+  <title>대화상점 로그인인</title>
 
   <!-- update the version number as needed -->
   <script defer src="/__/firebase/9.13.0/firebase-app-compat.js"></script>
@@ -90,10 +90,35 @@
   </nav>
 
   <!-- Main -->
-  <div class="container">
-    <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
-      <h2>새롭게 대화에 사로잡히다</h2>
+  <div class="container p-5">
+    <div class="text-center">
+      <h2 class="mt-3">대화상점 회원가입</h2>
     </div>
+  </div>
+  <div class="container p-5">
+    <form>
+      <div class="form-group mb-3">
+        <label for="signup-email">이메일 주소</label>
+        <input type="email" class="form-control" id="signup-email">
+      </div>
+      <div class="form-group mb-5">
+        <label for="signup-password">비밀번호</label>
+        <input type="password" class="form-control" id="signup-password">
+      </div>
+      <div class="form-group mb-3">
+        <label for="signup-name">이름</label>
+        <input type="email" class="form-control" id="signup-name">
+      </div>
+      <div class="form-group mb-3">
+        <label for="signup-birthDay">생일</label>
+        <input type="date" class="form-control" id="signup-birthDay">
+      </div>
+      <div class="form-group mb-3">
+        <label for="signup-phoneNumber">전화번호</label>
+        <input type="email" class="form-control" id="signup-phoneNumber">
+      </div>
+    </form>
+    <button class="btn btn-primary" id="signup-submit">가입하기</button>
   </div>
 
   <!-- JavaScript Bundle with Popper -->
