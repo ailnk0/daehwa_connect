@@ -34,59 +34,55 @@
 <body>
   <!-- NavBar -->
   <nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
-        aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="bi-list"></i>
-      </button>
-      <div class="d-flex justify-content-center">
-        <a href="index.html">
-          <img
-            src="https://blogpfthumb-phinf.pstatic.net/MjAxOTA0MTFfMjc3/MDAxNTU0OTcyMTY0Mjg5.X2WkidVmSkqBVgu-26ykXsk02bg8tpk2pxSe-okg4N0g.UApAvBv-7xz8dlhtqFF2bXTIOTMrbog8XWKXjG6OzsUg.JPEG.koob_book/blogthumb-01.jpg?type=s1"
-            alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
-        </a>
+      <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
+              aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+              <i class="bi-list"></i>
+          </button>
+          <div class="d-flex justify-content-center">
+              <a href="index.html">
+                  <img src="https://blogpfthumb-phinf.pstatic.net/MjAxOTA0MTFfMjc3/MDAxNTU0OTcyMTY0Mjg5.X2WkidVmSkqBVgu-26ykXsk02bg8tpk2pxSe-okg4N0g.UApAvBv-7xz8dlhtqFF2bXTIOTMrbog8XWKXjG6OzsUg.JPEG.koob_book/blogthumb-01.jpg?type=s1"
+                      alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+              </a>
+          </div>
+          <div id="usermenu-signedin" class="btn-group d-none">
+              <button class="navbar-toggler" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi-person-circle"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                      <div class="dropdown-header">
+                          <div id="userName"></div>
+                          <div id="userEmail"></div>
+                      </div>
+                  </li>
+                  <li>
+                      <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="#">프로필 편집</a></li>
+                  <li><button id="usermenuitem-signout" class="dropdown-item">로그아웃</button></li>
+              </ul>
+          </div>
+          <div id="usermenu-signedout" class="btn-group">
+              <button class="navbar-toggler" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi-person-circle"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="sign_in.html">로그인</a></li>
+              </ul>
+          </div>
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+              <ul class="navbar-nav me-auto mt-2 mb-2 mb-lg-0">
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="write.html">게시글 작성</a>
+                  </li>
+              </ul>
+              <form class="d-flex" role="search">
+                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-success" type="submit">Search</button>
+              </form>
+          </div>
       </div>
-      <div id="usermenu-signedin" class="btn-group d-none">
-        <button class="navbar-toggler" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="bi-person-circle"></i>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li>
-            <div class="dropdown-header">
-              <div id="userName"></div>
-              <div id="userEmail"></div>
-            </div>
-          </li>
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li><a class="dropdown-item" href="#">프로필 편집</a></li>
-          <li><button id="usermenuitem-signout" class="dropdown-item">로그아웃</button></li>
-        </ul>
-      </div>
-      <div id="usermenu-signedout" class="btn-group">
-        <button class="navbar-toggler" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="bi-person-circle"></i>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="sign_in.html">로그인</a></li>
-        </ul>
-      </div>
-      <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">모집</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">게시판</a>
-          </li>
-        </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-      </div>
-    </div>
   </nav>
 
   <!-- Main -->
