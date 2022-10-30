@@ -1,6 +1,6 @@
 # 대화상점 톡톡 프로젝트
 
-[새롭게 대화에 사로잡히다](daehwa-connect.web.app)
+[새롭게 대화에 사로잡히다](https://daehwa-connect.web.app/)
 
 talk talk 대화를 하기도 하고
 똑똑 두드리며 가다가는
