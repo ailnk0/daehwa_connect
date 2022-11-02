@@ -9,10 +9,6 @@ class Firebase {
     };
 }
 
-function errorMessage(error) {
-    alert(error);
-}
-
 function initIndex() {
     if ($("#post-carousel").length <= 0) {
         return;
@@ -131,7 +127,8 @@ function initDelete() {
                     .then(() => {
                     })
                     .catch((error) => {
-                        assert(error);
+                        console.log(error);
+                        alert('이미지를 삭제할 수 없습니다\n' + error.message);
                     });
             }
 
@@ -140,7 +137,8 @@ function initDelete() {
                     alert("게시물이 삭제되었습니다!");
                     window.location.href = 'index.html';
                 }).catch((error) => {
-                    alert("게시물을 삭제할 수 없습니다!\n" + error);
+                    console.log(error);
+                    alert("게시물을 삭제할 수 없습니다!\n" + error.message);
                     window.location.href = 'index.html';
                 });
         });
@@ -207,7 +205,8 @@ function signIn() {
             window.location.href = "index.html";
         })
         .catch(function (error) {
-            alert(error);
+            console.log(error);
+            alert('로그인 할 수 없습니다.\n' + error.message);
         });
 }
 
@@ -220,7 +219,8 @@ function signUp() {
             updateUserData(response.user);
         })
         .catch(function (error) {
-            alert(error);
+            console.log(error);
+            alert('회원가입을 할 수 없습니다.\n' + error.message);
         });
 
 }
@@ -257,8 +257,9 @@ function editPost() {
         date: new Date(),
     }).then((result) => {
         window.location.href = "index.html";
-    }).catch((err) => {
-        alert(err);
+    }).catch((error) => {
+        console.log(error);
+        alert('게시글을 편집 할 수 없습니다\n' + error.message);
     });
 }
 
@@ -271,14 +272,14 @@ function writePost() {
     let fileId = Date.now().toString(36) + Math.random().toString(36).substr(2);
 
     const storageRef = Firebase.storage.ref();
-    const uploadTask = storageRef.child('write-image/' + fileId).put(file);
-
+    const uploadTask = storageRef.child(`write-image/${Firebase.currentUser.auth_data.uid}/${fileId}`).put(file);
     uploadTask.on('state_changed',
         // 변화시 동작하는 함수 
         null,
         // 에러시 동작하는 함수
         (error) => {
-            alert(error);
+            console.log(error);
+            alert('이미지를 업로드 할 수 없습니다\n' + error.message);
         },
         // 성공시 동작하는 함수
         () => {
@@ -293,8 +294,9 @@ function writePost() {
                     name: Firebase.currentUser.custom_data.name,
                 }).then((result) => {
                     window.location.href = "index.html";
-                }).catch((err) => {
-                    alert(err);
+                }).catch((error) => {
+                    console.log(error);
+                    alert('이미지 주소를 읽을 수 없습니다\n' + error.message);
                 });
             });
         });
