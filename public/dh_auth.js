@@ -21,6 +21,11 @@ function initIndex() {
     Firebase.db.collection('write-post').get().then((result) => {
         result.forEach((doc) => {
 
+            // let storageRef = Firebase.storage.ref();
+            // storageRef.child(doc.data().imagePath).getDownloadURL().then((url) => {
+            //     console.log(url);
+            // });
+
             let template = `
                 <div class="post">
                     <div class="post-header">
