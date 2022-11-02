@@ -270,9 +270,10 @@ function writePost() {
 
     let file = $('#write-image').prop('files')[0];
     let fileId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+    let filePath = `write-image/${Firebase.currentUser.auth_data.uid}/${fileId}`;
 
     const storageRef = Firebase.storage.ref();
-    const uploadTask = storageRef.child(`write-image/${Firebase.currentUser.auth_data.uid}/${fileId}`).put(file);
+    const uploadTask = storageRef.child(filePath).put(file);
     uploadTask.on('state_changed',
         // 변화시 동작하는 함수 
         null,
@@ -288,7 +289,7 @@ function writePost() {
                     title: $('#write-title').val(),
                     content: $('#write-content').val(),
                     image: url,
-                    imagePath: 'write-image/' + fileId,
+                    imagePath: filePath,
                     date: new Date(),
                     uid: Firebase.currentUser.auth_data.uid,
                     name: Firebase.currentUser.custom_data.name,
