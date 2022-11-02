@@ -4,7 +4,6 @@
 }
 
 .post {
-    width: 100%;
     margin-bottom: 50px;
 }
 
@@ -42,8 +41,25 @@
     font-size: 14px;
 }
 
+.post-content-header {
+    height: 50px;
+}
+
+.post-comment {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .date {
+    float: right;
     font-size: 11px;
+    padding-left: 10px;
+    padding-top: 7px;
     color: grey;
-    margin-top: -8px;
+}
+
+.like {
+    float: left;
+    padding-left: 10px;
+    padding-top: 7px;
 }

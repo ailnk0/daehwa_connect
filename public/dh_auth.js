@@ -36,18 +36,61 @@ function initIndex() {
                     </div>
                     <div class="post-body" style="background-image: url('${doc.data().image}');"></div>
                     <div class="post-content">
-                        <p>43 Likes</p>
-                        <p><strong>${doc.data().name}</strong> 너무 귀여워요!</p>
-                        <p class="date">${doc.data().date.toDate().toLocaleString()}</p>
+                        <div class="post-content-header">
+                            <p class="like">좋아요 43개</p>
+                            <p class="date">${doc.data().date.toDate().toLocaleString()}</p>
+                        </div>
+                        <div id="post-comment-${doc.id}" class="post-comment mb-3">
+                        </div>
+                        <div class="input-group mb-3">
+                            <input id="input-comment-${doc.id}" type="text" class="form-control form-control-sm" placeholder="댓글 달기..." aria-label="댓글 달기..." aria-describedby="button-comment">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" id="button-comment-${doc.id}">게시</button>
+                        </div>
                     </div>
                 </div>
                 `;
-
             $('#post-carousel').append(template);
-        });
 
+            Firebase.db.collection('write-post').doc(doc.id).collection('comments').orderBy('date').onSnapshot((result) => {
+                $(`#post-comment-${doc.id}`).html('');
+                result.forEach((comment) => {
+                    let commentTemplate = `
+                        <div class="mb-1">
+                            <strong>${comment.data().userName}</strong> ${comment.data().content}
+                        </div>
+                    `;
+                    $(`#post-comment-${doc.id}`).append(commentTemplate);
+                })
+            });
 
+            $(`#button-comment-${doc.id}`).click(function() {
+                if (Firebase.currentUser.auth_data == null) {
+                    window.location.href = 'sign_in.html';
+                    return;
+                }
+
+                let comment = $(`#input-comment-${doc.id}`).val();
+                if (!comment) {
+                    return;
+                }
+
+                let commentData = {
+                    content : comment,
+                    date : new Date(),
+                    uid : Firebase.currentUser.auth_data.uid,
+                    userName : Firebase.currentUser.custom_data.name,
+                }
+                
+                Firebase.db.collection('write-post').doc(doc.id).collection('comments').add(commentData);
+                $(`#input-comment-${doc.id}`).val('');
+            });
+
+        })
     });
+}
+
+function initComment() {
+    
 }
 
 function initEdit() {
