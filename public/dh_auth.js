@@ -38,7 +38,7 @@ function initIndex() {
                     <div class="post-body" style="background-image: url('${doc.data().image}');"></div>
                     <div class="post-content">
                         <div class="post-content-header">
-                            <p class="like">좋아요 43개</p>
+                            <div class="like">❤</div>
                             <p class="date">${doc.data().date.toDate().toLocaleString()}</p>
                         </div>
                         <div id="post-comment-${doc.id}" class="post-comment mb-3">
@@ -64,7 +64,7 @@ function initIndex() {
                 })
             });
 
-            $(`#button-comment-${doc.id}`).click(function() {
+            $(`#button-comment-${doc.id}`).click(function () {
                 if (Firebase.currentUser.auth_data == null) {
                     window.location.href = 'sign_in.html';
                     return;
@@ -76,12 +76,12 @@ function initIndex() {
                 }
 
                 let commentData = {
-                    content : comment,
-                    date : new Date(),
-                    uid : Firebase.currentUser.auth_data.uid,
-                    userName : Firebase.currentUser.custom_data.name,
+                    content: comment,
+                    date: new Date(),
+                    uid: Firebase.currentUser.auth_data.uid,
+                    userName: Firebase.currentUser.custom_data.name,
                 }
-                
+
                 Firebase.db.collection('write-post').doc(doc.id).collection('comments').add(commentData);
                 $(`#input-comment-${doc.id}`).val('');
             });
@@ -91,7 +91,7 @@ function initIndex() {
 }
 
 function initComment() {
-    
+
 }
 
 function initEdit() {
@@ -102,12 +102,33 @@ function initEdit() {
     let queryString = new URLSearchParams(window.location.search);
     let postId = queryString.get('id');
 
-    Firebase.db.collection('write-post').doc(postId).get().then((result) => {
-        detail = result.data();
+    Firebase.db.collection('write-post').doc(postId).get()
+        .then((result) => {
+            $('#edit-title').val(result.data().title);
+            $('#edit-content').html(result.data().content);
+        });
+}
 
-        $('#edit-title').val(result.data().title);
-        $('#edit-content').html(result.data().content);
+function initEditProfile() {
+    if ($("#editprofile-submit").length <= 0) {
+        return;
+    }
+
+    let queryString = new URLSearchParams(window.location.search);
+    let uid = queryString.get('uid');
+
+    Firebase.auth.onAuthStateChanged(function (user) {
+        if (user) {
+            $('#editprofile-email').val(user.email);
+        }
     });
+
+    Firebase.db.collection('user').doc(uid).get()
+        .then((result) => {
+            $('#editprofile-name').val(result.data().name);
+            $('#editprofile-birthDay').val(result.data().birthDay);
+            $('#editprofile-phoneNumber').val(result.data().phoneNumber);
+        });
 }
 
 function initDelete() {
@@ -165,6 +186,19 @@ function registerEvent() {
 
     $('#edit-post').click(function () {
         editPost();
+    });
+
+    $('#usermenuitem-editprofile').click(function () {
+        if (Firebase.currentUser.auth_data == null) {
+            return;
+        }
+        window.location.href = `edit_profile.html?uid=${Firebase.currentUser.auth_data.uid}`;
+    });
+
+    console.log('registerEvent');
+    $('#editprofile-submit').click(function () {
+        console.log('editprofile-submit');
+        editProfile();
     });
 
     Firebase.auth.onAuthStateChanged(function (user) {
@@ -241,6 +275,38 @@ function updateUserData(user) {
         .then(function (response) {
             window.location.href = "index.html";
         });
+}
+
+function editProfile() {
+    if (Firebase.currentUser.auth_data == null) {
+        return;
+    }
+
+    let queryString = new URLSearchParams(window.location.search);
+    let uid = queryString.get('uid');
+
+
+    Firebase.db.collection('user').doc(uid).update({
+        name: $('#editprofile-name').val(),
+        birthDay: $('#editprofile-birthDay').val(),
+        phoneNumber: $('#editprofile-phoneNumber').val(),
+    }).then((result) => {
+        let newPassword = $('#editprofile-password').val();
+        if (newPassword.length > 0) {
+            Firebase.currentUser.auth_data.updatePassword(newPassword).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                console.log(error);
+                alert('비밀번호를 편집 할 수 없습니다\n' + error.message);
+                $('#editprofile-password').focus();
+            });
+        } else {
+            window.location.href = "index.html";
+        }
+    }).catch((error) => {
+        console.log(error);
+        alert('프로필을 편집 할 수 없습니다\n' + error.message);
+    });
 }
 
 function editPost() {
@@ -330,6 +396,7 @@ document.addEventListener('DOMContentLoaded', function () {
         initIndex();
         initEdit();
         initDelete();
+        initEditProfile();
 
     } catch (e) {
         console.error(e);
