@@ -92,19 +92,27 @@
     </div>
   </div>
   <div class="container p-5">
-    <form>
+    <form class="was-validated mb-5">
       <div class="form-group mb-3">
         <label for="signup-email">이메일 주소</label>
-        <input type="email" class="form-control" id="signup-email">
+        <input type="email" class="form-control" id="signup-email" required>
+        <div class="invalid-feedback">
+          유효한 이메일 주소를 입력해주세요
+        </div>
       </div>
-      <div class="form-group mb-5">
+      <div class="form-group mb-3">
         <label for="signup-password">비밀번호</label>
-        <input type="password" class="form-control" id="signup-password">
+        <input type="password" class="form-control" id="signup-password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$" required>
+        <div class="invalid-feedback">
+          비밀번호는 알파벳 대문자와 소문자, 숫자, 특수문자로 구성된 최소 10자리 길이로 입력해주세요
+        </div>
       </div>
       <div class="form-group mb-3">
         <label for="signup-name">프로필 이름</label>
-        <input type="text" class="form-control" id="signup-name">
+        <input type="text" class="form-control" id="signup-name" required>
       </div>
+    </form>
+    <form>
       <div class="form-group mb-3">
         <label for="signup-birthDay">생일</label>
         <input type="date" class="form-control" id="signup-birthDay">

@@ -9,6 +9,8 @@ class Firebase {
     };
 }
 
+let passwordRegex = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$');
+
 function initIndex() {
     if ($("#post-carousel").length <= 0) {
         return;
@@ -247,6 +249,11 @@ function signIn() {
 function signUp() {
     let email = $('#signup-email').val();
     let password = $('#signup-password').val();
+
+    if (!passwordRegex.test(password)) {
+        alert('비밀번호는 알파벳 대문자와 소문자, 숫자, 특수문자로 구성된 최소 10자리 길이로 입력해주세요');
+        return;
+    }
 
     Firebase.auth.createUserWithEmailAndPassword(email, password)
         .then(function (response) {
