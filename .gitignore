@@ -64,3 +64,6 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# Firebase Admin
+functions/daehwa-connect-firebase-adminsdk-9pqmd-4162e53b6a.json
