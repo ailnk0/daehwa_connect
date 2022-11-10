@@ -18,76 +18,72 @@ function initIndex() {
 
     Firebase.db.collection('write-post').get().then((result) => {
         result.forEach((doc) => {
-
-            // let storageRef = Firebase.storage.ref();
-            // storageRef.child(doc.data().imagePath).getDownloadURL().then((url) => {
-            //     console.log(url);
-            // });
-
-            let template = `
-                <div class="post">
-                    <div class="post-header">
-                        <div class="profile"></div>
-                        <span class="profile-name">${doc.data().name}</span>
-                        <button class="btn btn-light" style="float:right;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi-three-dots-vertical"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="edit.html?id=${doc.id}">편집</a></li>
-                            <li><a class="dropdown-item" href="delete.html?id=${doc.id}">삭제</a></li>
-                        </ul>
-                    </div>
-                    <div class="post-body" style="background-image: url('${doc.data().image}');"></div>
-                    <div class="post-content">
-                        <div class="post-content-header">
-                            <div class="like">❤</div>
-                            <p class="date">${doc.data().date.toDate().toLocaleString()}</p>
+            let storageRef = Firebase.storage.ref();
+            storageRef.child(doc.data().imagePath).getDownloadURL().then((imageUrl) => {
+                let template = `
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="profile"></div>
+                            <span class="profile-name">${doc.data().name}</span>
+                            <button class="btn btn-light" style="float:right;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="edit.html?id=${doc.id}">편집</a></li>
+                                <li><a class="dropdown-item" href="delete.html?id=${doc.id}">삭제</a></li>
+                            </ul>
                         </div>
-                        <div id="post-comment-${doc.id}" class="post-comment mb-3">
-                        </div>
-                        <div class="input-group mb-3">
-                            <input id="input-comment-${doc.id}" type="text" class="form-control form-control-sm" placeholder="댓글 달기..." aria-label="댓글 달기..." aria-describedby="button-comment">
-                            <button class="btn btn-sm btn-outline-secondary" type="button" id="button-comment-${doc.id}">게시</button>
+                        <div class="post-body" style="background-image: url('${imageUrl}');"></div>
+                        <div class="post-content">
+                            <div class="post-content-header">
+                                <div class="like">❤</div>
+                                <p class="date">${doc.data().date.toDate().toLocaleString()}</p>
+                            </div>
+                            <div id="post-comment-${doc.id}" class="post-comment mb-3">
+                            </div>
+                            <div class="input-group mb-3">
+                                <input id="input-comment-${doc.id}" type="text" class="form-control form-control-sm" placeholder="댓글 달기..." aria-label="댓글 달기..." aria-describedby="button-comment">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" id="button-comment-${doc.id}">게시</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                `;
-            $('#post-carousel').append(template);
-
-            Firebase.db.collection('write-post').doc(doc.id).collection('comments').orderBy('date').onSnapshot((result) => {
-                $(`#post-comment-${doc.id}`).html('');
-                result.forEach((comment) => {
-                    let commentTemplate = `
-                        <div class="mb-1">
-                            <strong>${comment.data().userName}</strong> ${comment.data().content}
-                        </div>
                     `;
-                    $(`#post-comment-${doc.id}`).append(commentTemplate);
-                })
+                $('#post-carousel').append(template);
+    
+                Firebase.db.collection('write-post').doc(doc.id).collection('comments').orderBy('date').onSnapshot((result) => {
+                    $(`#post-comment-${doc.id}`).html('');
+                    result.forEach((comment) => {
+                        let commentTemplate = `
+                            <div class="mb-1">
+                                <strong>${comment.data().userName}</strong> ${comment.data().content}
+                            </div>
+                        `;
+                        $(`#post-comment-${doc.id}`).append(commentTemplate);
+                    })
+                });
+    
+                $(`#button-comment-${doc.id}`).click(function () {
+                    if (Firebase.currentUser.auth_data == null) {
+                        window.location.href = 'sign_in.html';
+                        return;
+                    }
+    
+                    let comment = $(`#input-comment-${doc.id}`).val();
+                    if (!comment) {
+                        return;
+                    }
+    
+                    let commentData = {
+                        content: comment,
+                        date: new Date(),
+                        uid: Firebase.currentUser.auth_data.uid,
+                        userName: Firebase.currentUser.custom_data.name,
+                    }
+    
+                    Firebase.db.collection('write-post').doc(doc.id).collection('comments').add(commentData);
+                    $(`#input-comment-${doc.id}`).val('');
+                });
             });
-
-            $(`#button-comment-${doc.id}`).click(function () {
-                if (Firebase.currentUser.auth_data == null) {
-                    window.location.href = 'sign_in.html';
-                    return;
-                }
-
-                let comment = $(`#input-comment-${doc.id}`).val();
-                if (!comment) {
-                    return;
-                }
-
-                let commentData = {
-                    content: comment,
-                    date: new Date(),
-                    uid: Firebase.currentUser.auth_data.uid,
-                    userName: Firebase.currentUser.custom_data.name,
-                }
-
-                Firebase.db.collection('write-post').doc(doc.id).collection('comments').add(commentData);
-                $(`#input-comment-${doc.id}`).val('');
-            });
-
         })
     });
 }
@@ -344,6 +340,7 @@ function writePost() {
     let file = $('#write-image').prop('files')[0];
     let fileId = Date.now().toString(36) + Math.random().toString(36).substr(2);
     let filePath = `write-image/${Firebase.currentUser.auth_data.uid}/${fileId}`;
+    let filePathResized = `${filePath}_450x450`;
 
     const storageRef = Firebase.storage.ref();
     const uploadTask = storageRef.child(filePath).put(file);
@@ -357,21 +354,19 @@ function writePost() {
         },
         // 성공시 동작하는 함수
         () => {
-            uploadTask.snapshot.ref.getDownloadURL().then((url) => {
-                Firebase.db.collection('write-post').add({
-                    title: $('#write-title').val(),
-                    content: $('#write-content').val(),
-                    image: url,
-                    imagePath: filePath,
-                    date: new Date(),
-                    uid: Firebase.currentUser.auth_data.uid,
-                    name: Firebase.currentUser.custom_data.name,
-                }).then((result) => {
-                    window.location.href = "index.html";
-                }).catch((error) => {
-                    console.log(error);
-                    alert('이미지 주소를 읽을 수 없습니다\n' + error.message);
-                });
+            Firebase.db.collection('write-post').add({
+                title: $('#write-title').val(),
+                content: $('#write-content').val(),
+                image: filePathResized,
+                imagePath: filePathResized,
+                date: new Date(),
+                uid: Firebase.currentUser.auth_data.uid,
+                name: Firebase.currentUser.custom_data.name,
+            }).then((result) => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                console.log(error);
+                alert('이미지 주소를 읽을 수 없습니다\n' + error.message);
             });
         });
 }
