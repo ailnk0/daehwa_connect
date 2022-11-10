@@ -1,9 +1,10 @@
 const functions = require("firebase-functions");
+
+// The Firebase Admin SDK to access Firestore.
 const admin = require("firebase-admin");
 const serviceAccount = require(
     "daehwa-connect-firebase-adminsdk-9pqmd-4162e53b6a.json"
 );
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -11,10 +12,11 @@ admin.initializeApp({
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
 
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
-});
+exports.helloWorld = functions.region("asia-northeast3")
+    .https.onRequest((request, response) => {
+      functions.logger.info("Hello logs!", {structuredData: true});
+      response.send("Hello from Firebase!");
+    });
 
 // exports.createAlert = functions.region('asia-northeast3')
 // .firestore.document('chatroom/{docid}').onCreate((snapshot, context) => {
