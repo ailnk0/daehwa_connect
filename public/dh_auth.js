@@ -1,8 +1,10 @@
 class Firebase {
+    static firebase = null;
     static app = null;
     static db = null;
     static auth = null;
     static storage = null;
+    static ui = null;
     static currentUser = {
         auth_data: null,
         custom_data: null,
@@ -49,7 +51,7 @@ function initIndex() {
                     </div>
                     `;
                 $('#post-carousel').append(template);
-    
+
                 Firebase.db.collection('write-post').doc(doc.id).collection('comments').orderBy('date').onSnapshot((result) => {
                     $(`#post-comment-${doc.id}`).html('');
                     result.forEach((comment) => {
@@ -61,25 +63,25 @@ function initIndex() {
                         $(`#post-comment-${doc.id}`).append(commentTemplate);
                     })
                 });
-    
+
                 $(`#button-comment-${doc.id}`).click(function () {
                     if (Firebase.currentUser.auth_data == null) {
                         window.location.href = 'sign_in.html';
                         return;
                     }
-    
+
                     let comment = $(`#input-comment-${doc.id}`).val();
                     if (!comment) {
                         return;
                     }
-    
+
                     let commentData = {
                         content: comment,
                         date: new Date(),
                         uid: Firebase.currentUser.auth_data.uid,
                         userName: Firebase.currentUser.custom_data.name,
                     }
-    
+
                     Firebase.db.collection('write-post').doc(doc.id).collection('comments').add(commentData);
                     $(`#input-comment-${doc.id}`).val('');
                 });
@@ -193,9 +195,7 @@ function registerEvent() {
         window.location.href = `edit_profile.html?uid=${Firebase.currentUser.auth_data.uid}`;
     });
 
-    console.log('registerEvent');
     $('#editprofile-submit').click(function () {
-        console.log('editprofile-submit');
         editProfile();
     });
 
@@ -206,6 +206,10 @@ function registerEvent() {
                 .doc(user.uid)
                 .get()
                 .then((result) => {
+                    if (result.data() == null) {
+                        return;
+                    }
+
                     Firebase.currentUser.auth_data = user;
                     Firebase.currentUser.custom_data = result.data();
 
@@ -371,6 +375,67 @@ function writePost() {
         });
 }
 
+function initGoogleLogin() {
+
+    if (Firebase.ui == null || $('#firebaseui-auth-container').length == 0) {
+        return;
+    }
+
+    var uiConfig = {
+        callbacks: {
+            signInSuccessWithAuthResult: function (authResult, redirectUrl) {
+                // User successfully signed in.
+                // Return type determines whether we continue the redirect automatically
+                // or whether we leave that to developer to handle.
+
+                const usersRef = Firebase.db.collection('user').doc(authResult.user.uid);
+                usersRef.get()
+                    .then((docSnapshot) => {
+                        if (docSnapshot.exists) {
+                            usersRef.onSnapshot((doc) => {
+                                // do stuff with the data
+                                //window.location.href = "index.html";
+                            });
+                        } else {
+                            usersRef.set({
+                                'name': authResult.user.displayName,
+                                'birthDay': "",
+                                'phoneNumber': "",
+                            }).then((result) => {
+                                //window.location.href = "index.html";
+                            });
+                        }
+                    });
+
+                return true;
+            },
+            uiShown: function () {
+                // The widget is rendered.
+                // Hide the loader.
+                document.getElementById('loader').style.display = 'none';
+            }
+        },
+        // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+        signInFlow: 'popup',
+        signInSuccessUrl: 'index.html',
+        signInOptions: [
+            // Leave the lines as is for the providers you want to offer your users.
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+            // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+            // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+            // firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            // firebase.auth.PhoneAuthProvider.PROVIDER_ID
+        ],
+        // Terms of service url.
+        //tosUrl: '<your-tos-url>',
+        // Privacy policy url.
+        //privacyPolicyUrl: '<your-privacy-policy-url>'
+    };
+
+    Firebase.ui.start('#firebaseui-auth-container', uiConfig);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
     // // The Firebase SDK is initialized and available here!
@@ -388,10 +453,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
     try {
+        Firebase.firebase = firebase;
         Firebase.app = firebase.app();
         Firebase.db = firebase.firestore();
         Firebase.auth = firebase.auth();
         Firebase.storage = firebase.storage();
+        if (firebaseui) {
+            Firebase.ui = new firebaseui.auth.AuthUI(Firebase.auth);
+        }
+
+        initGoogleLogin();
 
         registerEvent();
 
